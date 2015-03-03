@@ -9,6 +9,8 @@ var portNumber = 3000;
 var tokenLength = 40;
 var headerToken = "x-auth-token";
 var headerUsername = "x-auth-username";
+var exercises = require("./exercises");
+console.log(exercises);
 
 var auth = {
 	users: {
@@ -109,6 +111,12 @@ app.post("/secret", function(req, res){
 		console.log(req.body);
 		res.send("secret data from post");
 	});
+});
+
+app.get("/exercises", function(req, res){
+	auth.authorize(req, res, function(){
+		res.send(exercises);
+	})
 });
 
 app.use(express.static(path.join(__dirname, "../public")));

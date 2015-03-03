@@ -8,7 +8,7 @@ var Link = Router.Link;
 var Route = Router.Route;
 var RouteHandler = Router.RouteHandler;
 var Home = require("./components/home");
-var Example = require("./components/example");
+var Exercises = require("./components/exercises");
 var About= require("./components/about");
 var NotFound = require("./components/not_found");
 var auth = require("./helpers/auth");
@@ -39,7 +39,7 @@ var App = React.createClass({
 					<header>
 						<ul>
 							<li><Link to="home">Home</Link></li>
-							<li><Link to="example">Example</Link></li>
+							<li><Link to="exercises">Exercises</Link></li>
 							<li><Link to="about">About</Link></li>
 							<li>
 								<a href="#" onClick={this.logout}>Logout</a>
@@ -58,7 +58,7 @@ var App = React.createClass({
 
 var routes = (
 	<Route name="home" path="/" handler={App}>
-		<Route name="example" handler={Example}/>
+		<Route name="exercises" handler={Exercises}/>
 		<Route name="about" handler={About}/>
 		<DefaultRoute handler={Home}/>
 		<NotFoundRoute handler={NotFound}/>

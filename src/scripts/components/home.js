@@ -1,7 +1,6 @@
 /** @jsx React.DOM */
 
 var React = require("react");
-var $ = require("jquery");
 var cs = require("../helpers/cs");
 
 var Home = React.createClass({
