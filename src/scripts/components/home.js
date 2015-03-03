@@ -1,16 +1,16 @@
 /** @jsx React.DOM */
 
 var React = require("react");
-var cs = require("../helpers/cs");
+var api = require("../helpers/api");
 
 var Home = React.createClass({
 	testGet: function(){
-		cs.get("/secret", function(result){
+		api.get("/secret", function(result){
 			console.log("get working", result);
 		});
 	},
 	testPost: function(){
-		cs.post("/secret", { testData: "majom" }, function(result){
+		api.post("/secret", { testData: "majom" }, function(result){
 			console.log("post working", result);
 		})
 	},

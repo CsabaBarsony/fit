@@ -1,7 +1,7 @@
 /** @jsx React.DOM */
 
 var React = require("react");
-var cs = require("../helpers/cs");
+var api = require("../helpers/api");
 
 var Exercises = React.createClass({
 	getInitialState: function(){
@@ -11,7 +11,7 @@ var Exercises = React.createClass({
 		}
 	},
 	componentDidMount: function(){
-		cs.get("/exercises", function(exercises){
+		api.get("/exercises", function(exercises){
 			console.log(exercises);
 		});
 	},

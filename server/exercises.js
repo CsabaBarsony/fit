@@ -1,5 +1,5 @@
-module.exports = [
-	{
+module.exports = {
+	"deadlift": {
 		name: "deadlift",
 		preQuantities: [
 			{
@@ -13,7 +13,7 @@ module.exports = [
 			}
 		]
 	},
-	{
+	"squat": {
 		name: "squat",
 		preQuantities: [
 			{
@@ -27,7 +27,7 @@ module.exports = [
 			}
 		]
 	},
-	{
+	"bench_press": {
 		name: "bench_press",
 		preQuantities: [
 			{
@@ -41,7 +41,7 @@ module.exports = [
 			}
 		]
 	},
-	{
+	"biceps_curl": {
 		name: "biceps_curl",
 		preQuantities: [
 			{
@@ -55,7 +55,7 @@ module.exports = [
 			}
 		]
 	},
-	{
+	"push-up": {
 		name: "push-up",
 		postQuantities: [
 			{
@@ -63,7 +63,7 @@ module.exports = [
 			}
 		]
 	},
-	{
+	"sit-up": {
 		name: "sit-up",
 		postQuantities: [
 			{
@@ -71,7 +71,7 @@ module.exports = [
 			}
 		]
 	},
-	{
+	"running": {
 		name: "running",
 		postQuantities: [
 			{
@@ -80,7 +80,7 @@ module.exports = [
 			}
 		]
 	},
-	{
+	"swimming": {
 		name: "swimming",
 		postQuantities: [
 			{
@@ -89,7 +89,7 @@ module.exports = [
 			}
 		]
 	},
-	{
+	"jumping_rop": {
 		name: "jumping_rope"
 	}
-];
+};
