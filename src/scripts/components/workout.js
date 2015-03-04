@@ -1,8 +1,6 @@
 /** @jsx React.DOM */
 
-var React = require("react");
 var api = require("../helpers/api");
-var _ = require("underscore");
 
 var Workout = React.createClass({
 	getInitialState: function(){

@@ -10,7 +10,6 @@ var tokenLength = 40;
 var headerToken = "x-auth-token";
 var headerUsername = "x-auth-username";
 var exercises = require("./exercises");
-console.log(exercises);
 
 var auth = {
 	users: {

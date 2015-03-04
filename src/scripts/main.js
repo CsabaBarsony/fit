@@ -1,7 +1,6 @@
 /** @jsx React.DOM */
 
-var React = require("react");
-var Router = require('react-router');
+var Router = window.ReactRouter;
 var DefaultRoute = Router.DefaultRoute;
 var NotFoundRoute = Router.NotFoundRoute;
 var Link = Router.Link;

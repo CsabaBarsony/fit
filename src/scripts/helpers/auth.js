@@ -1,5 +1,3 @@
-var $ = require("jquery");
-
 var auth = {
 	loginPage: "/login.html",
 	logout: function(callback){

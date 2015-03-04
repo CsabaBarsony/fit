@@ -1,4 +1,3 @@
-var $ = require("jquery");
 var auth = require("./auth");
 
 module.exports = {
