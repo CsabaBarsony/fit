@@ -20,11 +20,20 @@ var Workout = React.createClass({
 		if(exercise.preQuantities){
 			var unit = "";
 			if(exercise.preQuantities[0].unit) unit = "(" + exercise.preQuantities[0].unit + ")";
-			var preQuantity = prompt(exercise.preQuantities[0].name + "? " + unit);
-			console.log(preQuantity);
+			exercise.preQuantities[0].value = prompt(exercise.preQuantities[0].name + "? " + unit);
 		}
 		var numberOfSets = prompt("Nubmer of sets?");
-		console.log(numberOfSets);
+		var selectedExerciseList = [];
+		for(var i = 0; i < numberOfSets; i++){
+			selectedExerciseList.push(exercise);
+		}
+		if(this.state.selectedExerciseList)
+			selectedExerciseList = this.state.selectedExerciseList.concat(selectedExerciseList);
+		this.setState({
+			exercises: this.state.exercises,
+			selectedExercise: this.state.selectedExercise,
+			selectedExerciseList: selectedExerciseList
+		});
 	},
 	changeExercise: function(event){
 		this.setState({
@@ -47,6 +56,21 @@ var Workout = React.createClass({
 					<div>{this.state.selectedExercise.name}</div>
 				);
 			}
+			var selectedExerciseList = [];
+			_.each(this.state.selectedExerciseList, function(exercise){
+				var element;
+				if(exercise.preQuantities){
+					element = (
+						<p>{exercise.name} {exercise.preQuantities[0].value} {exercise.preQuantities[0].unit}</p>
+					);
+				}
+				else{
+					element = (
+						<p>{exercise.name}</p>
+					);
+				}
+				selectedExerciseList.push(element);
+			});
 			return (
 				<div>
 					<h2>New Workout</h2>
@@ -55,6 +79,7 @@ var Workout = React.createClass({
 						{exerciseOptions}
 					</select>
 					<button onClick={this.addExercise}>Add exercise</button>
+					{selectedExerciseList}
 				</div>
 			);
 		}
