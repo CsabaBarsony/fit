@@ -1,13 +1,14 @@
 /** @jsx React.DOM */
 
 var api = require("../helpers/api");
+var ExerciseForWorkout = require("./exerciseForWorkout");
 
 var Workout = React.createClass({
 	getInitialState: function(){
 		return {
 			exercises: null,
 			selectedExercise: null,
-			exercisesForWorkout: []
+			exerciseForWorkoutList: []
 		};
 	},
 	componentDidMount: function(){
@@ -26,12 +27,11 @@ var Workout = React.createClass({
 		for(var i = 0; i < sets; i++){
 			selectedExerciseList.push({
 				name: this.state.selectedExercise,
-				weight: weight,
-				key: this.state.exercisesForWorkout.length
+				weight: weight
 			});
 		}
 		var newState = React.addons.update(this.state, {
-			exercisesForWorkout: {
+			exerciseForWorkoutList: {
 				$push: selectedExerciseList
 			}
 		});
@@ -43,28 +43,33 @@ var Workout = React.createClass({
 			selectedExercise: event.target.value
 		});
 	},
-	removeExerciseFromWorkout: function(){
-		console.log("xxx");
+	removeExerciseFromWorkout: function(key){
+		console.log("key", key);
+		var newState = React.addons.update(this.state, {
+			exerciseForWorkoutList: {
+				$splice: [[key, 1]]
+			}
+		});
+		this.setState(newState);
 	},
 	render: function(){
 		if(this.state.exercises){
 			var exerciseOptions = [],
-				exerciseKey = 0;
+				key = 0;
 			_.each(this.state.exercises, function(exercise){
 				var option = (
 					<option key={Math.random()} value={exercise}>{exercise}</option>
 				);
 				exerciseOptions.push(option);
 			});
-			var exercisesForWorkout = [];
-			_.each(this.state.exercisesForWorkout, function(exercise){
-				var element;
-				element = (
-					<div key={exerciseKey++}>
-						<span>{exercise.name} {exercise.weight} kg</span><button onClick={this.removeExerciseFromWorkout}>remove</button>
-					</div>
+			var that = this;
+			var exerciseForWorkoutList = [];
+			_.each(this.state.exerciseForWorkoutList, function(exercise){
+				// The sequence of the 'key' and 'exerciseKey' properties is important because of the incrementation
+				var element = (
+					<ExerciseForWorkout key={key} exerciseKey={key++} exercise={exercise} remove={that.removeExerciseFromWorkout}/>
 				);
-				exercisesForWorkout.push(element);
+				exerciseForWorkoutList.push(element);
 			});
 			return (
 				<div>
@@ -74,7 +79,7 @@ var Workout = React.createClass({
 						{exerciseOptions}
 					</select>
 					<button onClick={this.addExercise}>Add exercise</button>
-					{exercisesForWorkout}
+					{exerciseForWorkoutList}
 				</div>
 			);
 		}
