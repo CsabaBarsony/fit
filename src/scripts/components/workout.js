@@ -20,11 +20,15 @@ var Workout = React.createClass({
 		});
 	},
 	addExercise: function(){
-		var weight = prompt("Weight? (kg)");
-		var sets = prompt("Number of sets?");
+		var weight = prompt("Weight? (kg)", 0);
+		var sets = prompt("Number of sets?", 1);
 		var selectedExerciseList = [];
 		for(var i = 0; i < sets; i++){
-			selectedExerciseList.push(this.state.selectedExercise);
+			selectedExerciseList.push({
+				name: this.state.selectedExercise,
+				weight: weight,
+				key: this.state.exercisesForWorkout.length
+			});
 		}
 		var newState = React.addons.update(this.state, {
 			exercisesForWorkout: {
@@ -39,29 +43,28 @@ var Workout = React.createClass({
 			selectedExercise: event.target.value
 		});
 	},
+	removeExerciseFromWorkout: function(){
+		console.log("xxx");
+	},
 	render: function(){
 		if(this.state.exercises){
-			var exerciseOptions = [];
+			var exerciseOptions = [],
+				exerciseKey = 0;
 			_.each(this.state.exercises, function(exercise){
 				var option = (
-					<option value={exercise}>{exercise}</option>
+					<option key={Math.random()} value={exercise}>{exercise}</option>
 				);
 				exerciseOptions.push(option);
 			});
-			var selectedExerciseList = [];
-			_.each(this.state.selectedExerciseList, function(exercise){
+			var exercisesForWorkout = [];
+			_.each(this.state.exercisesForWorkout, function(exercise){
 				var element;
-				if(exercise.preQuantities){
-					element = (
-						<p>{exercise.name} {exercise.preQuantities[0].value} {exercise.preQuantities[0].unit}</p>
-					);
-				}
-				else{
-					element = (
-						<p>{exercise.name}</p>
-					);
-				}
-				selectedExerciseList.push(element);
+				element = (
+					<div key={exerciseKey++}>
+						<span>{exercise.name} {exercise.weight} kg</span><button onClick={this.removeExerciseFromWorkout}>remove</button>
+					</div>
+				);
+				exercisesForWorkout.push(element);
 			});
 			return (
 				<div>
@@ -71,7 +74,7 @@ var Workout = React.createClass({
 						{exerciseOptions}
 					</select>
 					<button onClick={this.addExercise}>Add exercise</button>
-					{selectedExerciseList}
+					{exercisesForWorkout}
 				</div>
 			);
 		}
