@@ -4,41 +4,39 @@ var api = require("../helpers/api");
 
 var Workout = React.createClass({
 	getInitialState: function(){
-		return { exercises: false };
+		return {
+			exercises: null,
+			selectedExercise: null,
+			exercisesForWorkout: []
+		};
 	},
 	componentDidMount: function(){
 		var that = this;
 		api.get("/exercises", function(exercises){
 			that.setState({
-				exercises: exercises
+				exercises: exercises,
+				selectedExercise: exercises[0]
 			});
 		});
 	},
 	addExercise: function(){
-		if(!this.state.selectedExercise) return;
-		var exercise = this.state.exercises[this.state.selectedExercise.name];
-		if(exercise.preQuantities){
-			var unit = "";
-			if(exercise.preQuantities[0].unit) unit = "(" + exercise.preQuantities[0].unit + ")";
-			exercise.preQuantities[0].value = prompt(exercise.preQuantities[0].name + "? " + unit);
-		}
-		var numberOfSets = prompt("Nubmer of sets?");
+		var weight = prompt("Weight? (kg)");
+		var sets = prompt("Number of sets?");
 		var selectedExerciseList = [];
-		for(var i = 0; i < numberOfSets; i++){
-			selectedExerciseList.push(exercise);
+		for(var i = 0; i < sets; i++){
+			selectedExerciseList.push(this.state.selectedExercise);
 		}
-		if(this.state.selectedExerciseList)
-			selectedExerciseList = this.state.selectedExerciseList.concat(selectedExerciseList);
-		this.setState({
-			exercises: this.state.exercises,
-			selectedExercise: this.state.selectedExercise,
-			selectedExerciseList: selectedExerciseList
+		var newState = React.addons.update(this.state, {
+			exercisesForWorkout: {
+				$push: selectedExerciseList
+			}
 		});
+		this.setState(newState);
 	},
 	changeExercise: function(event){
 		this.setState({
 			exercises: this.state.exercises,
-			selectedExercise: this.state.exercises[event.target.value]
+			selectedExercise: event.target.value
 		});
 	},
 	render: function(){
@@ -46,16 +44,10 @@ var Workout = React.createClass({
 			var exerciseOptions = [];
 			_.each(this.state.exercises, function(exercise){
 				var option = (
-					<option value={exercise.name}>{exercise.name}</option>
+					<option value={exercise}>{exercise}</option>
 				);
 				exerciseOptions.push(option);
 			});
-			var selectedExercise = null;
-			if(this.state.selectedExercise){
-				selectedExercise = (
-					<div>{this.state.selectedExercise.name}</div>
-				);
-			}
 			var selectedExerciseList = [];
 			_.each(this.state.selectedExerciseList, function(exercise){
 				var element;
@@ -74,7 +66,7 @@ var Workout = React.createClass({
 			return (
 				<div>
 					<h2>New Workout</h2>
-					{selectedExercise}
+					<div>{this.state.selectedExercise}</div>
 					<select onChange={this.changeExercise}>
 						{exerciseOptions}
 					</select>
