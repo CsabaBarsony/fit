@@ -1,93 +1,89 @@
 /** @jsx React.DOM */
 
-var api = require("../helpers/api");
-var ExerciseForWorkout = require("./exerciseForWorkout");
+
+var Stopwatch = require("./stopwatch");
 
 var Workout = React.createClass({
 	getInitialState: function(){
 		return {
-			exercises: null,
-			selectedExercise: null,
-			exerciseForWorkoutList: []
+			workout: JSON.parse(localStorage.getItem("workout")),
+			exercise: 0,
+			phase: "init"
 		};
 	},
-	componentDidMount: function(){
-		var that = this;
-		api.get("/exercises", function(exercises){
-			that.setState({
-				exercises: exercises,
-				selectedExercise: exercises[0]
-			});
-		});
-	},
-	addExercise: function(){
-		var weight = prompt("Weight? (kg)", 0);
-		var sets = prompt("Number of sets?", 1);
-		var selectedExerciseList = [];
-		for(var i = 0; i < sets; i++){
-			selectedExerciseList.push({
-				name: this.state.selectedExercise,
-				weight: weight
+	controlButtonClick: function(){
+		if(this.state.phase === "init"){
+			this.setState({
+				workout: this.state.workout,
+				exercise: this.state.exercise,
+				phase: "exercise"
 			});
 		}
-		var newState = React.addons.update(this.state, {
-			exerciseForWorkoutList: {
-				$push: selectedExerciseList
+		else if(this.state.phase === "exercise"){
+			this.setState({
+				workout: this.state.workout,
+				exercise: this.state.exercise,
+				phase: "pause"
+			});
+		}
+		else if(this.state.phase === "pause"){
+			if(this.state.workout.exercises.length - 1 > this.state.exercise){
+				this.setState({
+					workout: this.state.workout,
+					exercise: this.state.exercise + 1,
+					phase: "exercise"
+				});
 			}
-		});
-		this.setState(newState);
-	},
-	changeExercise: function(event){
-		this.setState({
-			exercises: this.state.exercises,
-			selectedExercise: event.target.value
-		});
-	},
-	removeExerciseFromWorkout: function(key){
-		console.log("key", key);
-		var newState = React.addons.update(this.state, {
-			exerciseForWorkoutList: {
-				$splice: [[key, 1]]
+			else{
+				this.setState({
+					workout: this.state.workout,
+					exercise: this.state.exercise,
+					phase: "finish"
+				});
 			}
-		});
-		this.setState(newState);
+		}
+		else if(this.state.phase === "finish"){
+			if(this.state.workout.exercises.length !== this.tsList.length) throw new Error("baj van");
+			var result = [];
+			for(var i = 0, l = this.state.workout.exercises.length; i < l; i++){
+				var exercise = this.state.workout.exercises[i];
+				exercise.ts = this.tsList[i];
+				result.push(exercise);
+			}
+			console.log(result);
+		}
 	},
+	getStopwatchTs: function(ts){
+		this.tsList.push(ts);
+		console.log(this.tsList);
+	},
+	getControlButtonText: function(){
+		var phase = this.state.phase;
+		if(phase === "init") return "Start";
+		else if(phase === "exercise") return "Ready";
+		else if(phase === "pause") return "Next";
+		else if(phase === "finish") return "Finish";
+	},
+	tsList: [],
 	render: function(){
-		if(this.state.exercises){
-			var exerciseOptions = [],
-				key = 0;
-			_.each(this.state.exercises, function(exercise){
-				var option = (
-					<option key={Math.random()} value={exercise}>{exercise}</option>
-				);
-				exerciseOptions.push(option);
-			});
-			var that = this;
-			var exerciseForWorkoutList = [];
-			_.each(this.state.exerciseForWorkoutList, function(exercise){
-				// The sequence of the 'key' and 'exerciseKey' properties is important because of the incrementation
-				var element = (
-					<ExerciseForWorkout key={key} exerciseKey={key++} exercise={exercise} remove={that.removeExerciseFromWorkout}/>
-				);
-				exerciseForWorkoutList.push(element);
-			});
-			return (
-				<div>
-					<h2>New Workout</h2>
-					<div>{this.state.selectedExercise}</div>
-					<select onChange={this.changeExercise}>
-						{exerciseOptions}
-					</select>
-					<button onClick={this.addExercise}>Add exercise</button>
-					{exerciseForWorkoutList}
-				</div>
+		var actualExercise = (
+			<strong>actual: {this.state.workout.exercises[this.state.exercise].name} {this.state.workout.exercises[this.state.exercise].weight}kg</strong>
+		);
+		var nextExercise;
+		if(this.state.exercise !== this.state.workout.exercises.length - 1){
+			nextExercise = (
+				<strong>next: {this.state.workout.exercises[this.state.exercise + 1].name} {this.state.workout.exercises[this.state.exercise].weight}kg</strong>
 			);
 		}
-		else{
-			return (
-				<h2>Loading...</h2>
-			);
-		}
+		return (
+			<div>
+				<h2>Workout</h2>
+				{actualExercise}<br />
+				{nextExercise}<br />
+				<button onClick={this.controlButtonClick}>{this.getControlButtonText()}</button>
+				<Stopwatch phase={this.state.phase} getTs={this.getStopwatchTs}/>
+			</div>
+		);
 	}
 });
 
