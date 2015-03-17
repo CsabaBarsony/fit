@@ -1,6 +1,6 @@
 /** @jsx React.DOM */
 
-
+var api = require("../helpers/api");
 var Stopwatch = require("./stopwatch");
 
 var Workout = React.createClass({
@@ -20,29 +20,29 @@ var Workout = React.createClass({
 			});
 		}
 		else if(this.state.phase === "exercise"){
-			this.setState({
-				workout: this.state.workout,
-				exercise: this.state.exercise,
-				phase: "pause"
-			});
-		}
-		else if(this.state.phase === "pause"){
 			if(this.state.workout.exercises.length - 1 > this.state.exercise){
 				this.setState({
 					workout: this.state.workout,
 					exercise: this.state.exercise + 1,
-					phase: "exercise"
+					phase: "pause"
 				});
 			}
 			else{
 				this.setState({
 					workout: this.state.workout,
 					exercise: this.state.exercise,
-					phase: "finish"
+					phase: "completed"
 				});
 			}
 		}
-		else if(this.state.phase === "finish"){
+		else if(this.state.phase === "pause"){
+			this.setState({
+				workout: this.state.workout,
+				exercise: this.state.exercise,
+				phase: "exercise"
+			});
+		}
+		else if(this.state.phase === "completed"){
 			if(this.state.workout.exercises.length !== this.tsList.length) throw new Error("baj van");
 			var result = [];
 			for(var i = 0, l = this.state.workout.exercises.length; i < l; i++){
@@ -51,6 +51,9 @@ var Workout = React.createClass({
 				result.push(exercise);
 			}
 			console.log(result);
+			api.postWorkout(result, function(response){
+				console.log("api post successful", response);
+			});
 		}
 	},
 	getStopwatchTs: function(ts){
@@ -59,10 +62,10 @@ var Workout = React.createClass({
 	},
 	getControlButtonText: function(){
 		var phase = this.state.phase;
-		if(phase === "init") return "Start";
+		if(phase === "init") return "Begin Workout";
 		else if(phase === "exercise") return "Ready";
-		else if(phase === "pause") return "Next";
-		else if(phase === "finish") return "Finish";
+		else if(phase === "pause") return "Start";
+		else if(phase === "completed") return "Finish Workout";
 	},
 	tsList: [],
 	render: function(){

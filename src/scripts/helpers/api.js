@@ -38,5 +38,23 @@ module.exports = {
 				if(xhr.status >= 400) window.location.href = auth.loginPage;
 			}.bind(this)
 		});
+	},
+	postWorkout: function(workout, success){
+		$.ajax({
+			url: "/workout",
+			type: 'POST',
+			data: JSON.stringify({ ts: 1, workout: workout }),
+			headers: {
+				"x-auth-token": auth.getToken(),
+				"x-auth-username": auth.getUsername()
+			},
+			success: function(result) {
+				success(result);
+			}.bind(this),
+			error: function(xhr, status, err) {
+				console.log(status);
+				if(xhr.status >= 400 && xhr.status < 500) window.location.href = auth.loginPage;
+			}.bind(this)
+		});
 	}
 };

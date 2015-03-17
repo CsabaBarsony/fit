@@ -28,7 +28,7 @@ var Stopwatch = React.createClass({
 		if(this.props.phase === "exercise" && (this.state.ts === 0 || this.paused)){
 			this.start(this.paused);
 		}
-		if(this.props.phase === "pause"){
+		if(this.props.phase === "pause" || this.props.phase === "completed"){
 			this.pause();
 		}
 		return (

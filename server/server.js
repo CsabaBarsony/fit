@@ -14,7 +14,8 @@ var exercises = require("./exercises");
 var auth = {
 	users: {
 		a: {
-			password: "a"
+			password: "a",
+			workouts: []
 		}
 	},
 	register: function(username, password){
@@ -64,7 +65,7 @@ var auth = {
 		var username = req.headers[headerUsername];
 		var token = req.headers[headerToken];
 		if(!this.users[username] || this.users[username].token !== token) res.sendStatus(401);
-		else callback();
+		else callback(username);
 	},
 	generateToken: function generateToken(length){
 		var text = "";
@@ -78,6 +79,7 @@ var auth = {
 };
 
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 app.post("/register", function(req, res){
 	res.send(auth.register(req.body.username, req.body.password));
@@ -115,6 +117,20 @@ app.post("/secret", function(req, res){
 app.get("/exercises", function(req, res){
 	auth.authorize(req, res, function(){
 		res.send(exercises);
+	})
+});
+
+app.post("/workout", function(req, res){
+	auth.authorize(req, res, function(username){
+		console.log(req.body);
+		auth.users[username].workouts.push(JSON.parse(req.body));
+		res.send("workout saved");
+	});
+});
+
+app.get("/workouts", function(req, res){
+	auth.authorize(req, res, function(username){
+		res.send(auth.users[username].workouts);
 	})
 });
 
